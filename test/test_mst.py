@@ -67,7 +67,9 @@ def check_mst(adj_mat: np.ndarray,
 
     # test case to check if minimum edge is in MST (it should be!)
     non_zero_weights = adj_mat[adj_mat!=0] # find all non-zero weights
-    if len(non_zero_weights) > 0: # if the graph actually has non-zero weights, then do check
+    # if the graph actually has non-zero weights and more than one node, then do check 
+    # if one node in graph, mst should have no weights -- this handles that here.
+    if len(non_zero_weights) > 0 and adj_mat.shape[0] > 1:
         min_weight = non_zero_weights.min()
         assert min_weight in mst, "Minumum weight not in MST, incorrect!"
 
