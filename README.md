@@ -4,6 +4,9 @@ In this assignment, you'll implement Prim's algorithm, a non-trivial greedy algo
 
 ## Tasks
 
+## Status Badge
+[![mst_hw3](https://github.com/oghenand/HW3-PRIM-MST/actions/workflows/test.yml/badge.svg)](https://github.com/oghenand/HW3-PRIM-MST/actions/workflows/test.yml)
+
 ### Coding
 
 * [x] Complete the `construct_mst` method found in `mst/graph.py`. All necessary modules have already been imported. You should not rely on any other dependencies (e.g. networkx). 
