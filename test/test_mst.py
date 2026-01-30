@@ -114,6 +114,7 @@ def test_mst_student():
         [2, 0, 3, 0]
     ])
 
+    # create graph object and construct mst
     g = Graph(my_adj_mat)
     g.construct_mst()
 
