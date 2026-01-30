@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 from mst import Graph
 from sklearn.metrics import pairwise_distances
+import heapq
 
 
 def check_mst(adj_mat: np.ndarray, 
@@ -29,12 +30,46 @@ def check_mst(adj_mat: np.ndarray,
     def approx_equal(a, b):
         return abs(a - b) < allowed_error
 
+    edge_count = 0
     total = 0
     for i in range(mst.shape[0]):
         for j in range(i+1):
             total += mst[i, j]
+            if mst[i,j] != 0:
+                edge_count += 1
     assert approx_equal(total, expected_weight), 'Proposed MST has incorrect expected weight'
 
+    # test case for edges in a mst
+    num_nodes = adj_mat.shape[0]
+    num_mst_edges_true = num_nodes - 1
+    assert num_mst_edges_true == edge_count, "MST does not have n-1 edges! incorrect!"
+
+    def is_connected(adj_mat, mst):
+        # Function to check if mst is connected (it should be!)
+        # done with dfs
+        num_nodes = len(mst)
+        if num_nodes == 0:
+            return True # empty graph is connected
+
+        visited = set()
+        def dfs(node): # function to run dfs from a given node
+            visited.add(node) # add node to visited
+            for neighbor in range(num_nodes): # visit nodes that are neighboring, have non-neg. weights and not in visited
+                if mst[node][neighbor] != 0 and neighbor not in visited:
+                    # recursively run dfs on neighbors -- stops when all possible nodes that can be visted are visited
+                    dfs(neighbor)
+        # run dfs from random start point
+        dfs(0)
+        # True if visited is equal to number of nodes, meaning MST is connected
+        return len(visited) == len(adj_mat)
+    
+    assert is_connected(adj_mat, mst), "MST is not connected, incorrect!"
+
+    # test case to check if minimum edge is in MST (it should be!)
+    non_zero_weights = adj_mat[adj_mat!=0] # find all non-zero weights
+    if len(non_zero_weights) > 0: # if the graph actually has non-zero weights, then do check
+        min_weight = non_zero_weights.min()
+        assert min_weight in mst, "Minumum weight not in MST, incorrect!"
 
 def test_mst_small():
     """
@@ -71,4 +106,23 @@ def test_mst_student():
     TODO: Write at least one unit test for MST construction.
     
     """
-    pass
+    # example graph and adj mat
+    my_adj_mat = np.array([
+        [0, 5, 1, 2],
+        [5, 0, 4, 0],
+        [1, 4, 0, 3],
+        [2, 0, 3, 0]
+    ])
+
+    g = Graph(my_adj_mat)
+    g.construct_mst()
+
+    # example ground truth mst -- expected mst weight of 7
+    my_mst = np.array([
+        [0, 0, 1, 2],
+        [0, 0, 4, 0],
+        [1, 4, 0, 0],
+        [2, 0, 0, 0],
+    ])
+    # run test cases
+    check_mst(g.adj_mat, g.mst, my_mst.sum()/2)
