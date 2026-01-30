@@ -127,3 +127,13 @@ def test_mst_student():
     ])
     # run test cases
     check_mst(g.adj_mat, g.mst, my_mst.sum()/2)
+
+def test_mst_single_node():
+    # checking handling of single node graph (mst is single node with no edges)
+    my_adj_mat = np.array([
+        [7]
+    ])
+    g = Graph(my_adj_mat)
+    g.construct_mst()
+    # check if correct mst is found (node itself with no edges)
+    check_mst(g.adj_mat, g.mst, expected_weight=0)
